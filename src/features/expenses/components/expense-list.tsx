@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback } from "react"
 import {
   Dialog,
   DialogContent,
@@ -6,45 +6,45 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { ExpenseItem } from "@/features/expenses/components/expense-item";
-import { ExpenseForm } from "@/features/expenses/components/expense-form";
-import { useExpenses } from "@/features/expenses/hooks/use-expenses";
-import type { Expense } from "@/types/expense";
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { ExpenseItem } from "@/features/expenses/components/expense-item"
+import { ExpenseForm } from "@/features/expenses/components/expense-form"
+import { useExpenses } from "@/features/expenses/hooks/use-expenses"
+import type { Expense } from "@/types/expense"
 
 export const ExpenseList = () => {
-  const { expenses, removeExpense } = useExpenses();
-  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const { expenses, removeExpense } = useExpenses()
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const handleEdit = useCallback((expense: Expense) => {
-    setEditingExpense(expense);
-  }, []);
+    setEditingExpense(expense)
+  }, [])
 
   const handleCloseEdit = useCallback(() => {
-    setEditingExpense(null);
-  }, []);
+    setEditingExpense(null)
+  }, [])
 
   const handleConfirmDelete = useCallback(() => {
     if (deletingId) {
-      removeExpense(deletingId);
-      setDeletingId(null);
+      removeExpense(deletingId)
+      setDeletingId(null)
     }
-  }, [deletingId, removeExpense]);
+  }, [deletingId, removeExpense])
 
   if (expenses.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground py-4 text-center">
+      <p className="py-4 text-center text-sm text-muted-foreground">
         No hay gastos registrados
       </p>
-    );
+    )
   }
 
   return (
     <div className="flex flex-col gap-2">
       {editingExpense && (
-        <div className="rounded-md border border-border p-3 mb-2">
+        <div className="mb-2 rounded-md border border-border p-3">
           <ExpenseForm
             editingExpense={editingExpense}
             onClose={handleCloseEdit}
@@ -64,7 +64,7 @@ export const ExpenseList = () => {
       <Dialog
         open={deletingId !== null}
         onOpenChange={(open) => {
-          if (!open) setDeletingId(null);
+          if (!open) setDeletingId(null)
         }}
       >
         <DialogContent>
@@ -76,7 +76,11 @@ export const ExpenseList = () => {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="ghost" size="sm" onClick={() => setDeletingId(null)}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setDeletingId(null)}
+            >
               Cancelar
             </Button>
             <Button
@@ -90,5 +94,5 @@ export const ExpenseList = () => {
         </DialogContent>
       </Dialog>
     </div>
-  );
-};
+  )
+}

@@ -1,59 +1,59 @@
-import { useState, useCallback, type KeyboardEvent } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useBudget } from "@/features/budget/hooks/use-budget";
-import { useFormatCurrency } from "@/hooks/use-format-currency";
-import { sanitizeNumericInput } from "@/lib/validators";
+import { useState, useCallback, type KeyboardEvent } from "react"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { useBudget } from "@/features/budget/hooks/use-budget"
+import { useFormatCurrency } from "@/hooks/use-format-currency"
+import { sanitizeNumericInput } from "@/lib/validators"
 
 export const BudgetInput = () => {
-  const { budget, updateBudget } = useBudget();
-  const { formatCurrency } = useFormatCurrency();
-  const [isEditing, setIsEditing] = useState(false);
-  const [inputValue, setInputValue] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const { budget, updateBudget } = useBudget()
+  const { formatCurrency } = useFormatCurrency()
+  const [isEditing, setIsEditing] = useState(false)
+  const [inputValue, setInputValue] = useState("")
+  const [error, setError] = useState<string | null>(null)
 
   const handleStartEditing = useCallback(() => {
-    setInputValue(budget.amount === 0 ? "" : String(budget.amount));
-    setError(null);
-    setIsEditing(true);
-  }, [budget.amount]);
+    setInputValue(budget.amount === 0 ? "" : String(budget.amount))
+    setError(null)
+    setIsEditing(true)
+  }, [budget.amount])
 
   const handleSave = useCallback(() => {
-    const amount = inputValue === "" ? 0 : Number(inputValue);
-    const result = updateBudget(amount);
+    const amount = inputValue === "" ? 0 : Number(inputValue)
+    const result = updateBudget(amount)
 
     if (!result.success) {
-      setError(result.error);
-      return;
+      setError(result.error)
+      return
     }
 
-    setIsEditing(false);
-    setError(null);
-  }, [inputValue, updateBudget]);
+    setIsEditing(false)
+    setError(null)
+  }, [inputValue, updateBudget])
 
   const handleCancel = useCallback(() => {
-    setIsEditing(false);
-    setError(null);
-  }, []);
+    setIsEditing(false)
+    setError(null)
+  }, [])
 
   const handleChange = useCallback((value: string) => {
-    const sanitized = sanitizeNumericInput(value);
-    setInputValue(sanitized);
-    setError(null);
-  }, []);
+    const sanitized = sanitizeNumericInput(value)
+    setInputValue(sanitized)
+    setError(null)
+  }, [])
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
-        handleSave();
+        handleSave()
       }
 
       if (e.key === "Escape") {
-        handleCancel();
+        handleCancel()
       }
     },
     [handleSave, handleCancel]
-  );
+  )
 
   if (!isEditing) {
     return (
@@ -65,7 +65,7 @@ export const BudgetInput = () => {
           Editar
         </Button>
       </div>
-    );
+    )
   }
 
   return (
@@ -89,9 +89,7 @@ export const BudgetInput = () => {
           Cancelar
         </Button>
       </div>
-      {error && (
-        <p className="text-sm text-destructive">{error}</p>
-      )}
+      {error && <p className="text-sm text-destructive">{error}</p>}
     </div>
-  );
-};
+  )
+}

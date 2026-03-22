@@ -1,121 +1,123 @@
-import { useState, useCallback } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { useState, useCallback } from "react"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { CATEGORIES, type Category, type Expense } from "@/types/expense";
-import { useExpenses } from "@/features/expenses/hooks/use-expenses";
+} from "@/components/ui/select"
+import { Switch } from "@/components/ui/switch"
+import { CATEGORIES, type Category, type Expense } from "@/types/expense"
+import { useExpenses } from "@/features/expenses/hooks/use-expenses"
 import {
   sanitizeNumericInput,
   validateAmount,
   validateDescription,
-} from "@/lib/validators";
+} from "@/lib/validators"
 
 type ExpenseFormProps = {
-  editingExpense?: Expense | null;
-  onClose?: () => void;
-};
+  editingExpense?: Expense | null
+  onClose?: () => void
+}
 
 export const ExpenseForm = ({
   editingExpense = null,
   onClose,
 }: ExpenseFormProps) => {
-  const { createExpense, editExpense } = useExpenses();
+  const { createExpense, editExpense } = useExpenses()
 
   const [category, setCategory] = useState<Category | "">(
     editingExpense?.category ?? ""
-  );
+  )
   const [amount, setAmount] = useState(
     editingExpense ? String(editingExpense.amount) : ""
-  );
+  )
   const [description, setDescription] = useState(
     editingExpense?.description ?? ""
-  );
+  )
   const [hasInstallments, setHasInstallments] = useState(
     editingExpense?.installmentAmount !== null &&
       editingExpense?.installmentAmount !== undefined
-  );
+  )
   const [installmentAmount, setInstallmentAmount] = useState(
-    editingExpense?.installmentAmount ? String(editingExpense.installmentAmount) : ""
-  );
+    editingExpense?.installmentAmount
+      ? String(editingExpense.installmentAmount)
+      : ""
+  )
   const [installmentDetail, setInstallmentDetail] = useState(
     editingExpense?.installmentDetail ?? ""
-  );
+  )
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   const resetForm = useCallback(() => {
-    setCategory("");
-    setAmount("");
-    setDescription("");
-    setHasInstallments(false);
-    setInstallmentAmount("");
-    setInstallmentDetail("");
-    setErrors({});
-  }, []);
+    setCategory("")
+    setAmount("")
+    setDescription("")
+    setHasInstallments(false)
+    setInstallmentAmount("")
+    setInstallmentDetail("")
+    setErrors({})
+  }, [])
 
   const handleSubmit = useCallback(() => {
-    const newErrors: Record<string, string> = {};
+    const newErrors: Record<string, string> = {}
 
     if (!category) {
-      newErrors.category = "Seleccioná una categoría";
+      newErrors.category = "Seleccioná una categoría"
     }
 
-    const amountNum = amount === "" ? 0 : Number(amount);
-    const amountValidation = validateAmount(amountNum);
+    const amountNum = amount === "" ? 0 : Number(amount)
+    const amountValidation = validateAmount(amountNum)
 
     if (!amountValidation.valid) {
-      newErrors.amount = amountValidation.error!;
+      newErrors.amount = amountValidation.error!
     } else if (amountNum === 0) {
-      newErrors.amount = "El monto es requerido";
+      newErrors.amount = "El monto es requerido"
     }
 
-    const descValidation = validateDescription(description);
+    const descValidation = validateDescription(description)
 
     if (!descValidation.valid) {
-      newErrors.description = descValidation.error!;
+      newErrors.description = descValidation.error!
     }
 
     if (hasInstallments && installmentAmount) {
-      const instAmountNum = Number(installmentAmount);
-      const instValidation = validateAmount(instAmountNum);
+      const instAmountNum = Number(installmentAmount)
+      const instValidation = validateAmount(instAmountNum)
 
       if (!instValidation.valid) {
-        newErrors.installmentAmount = instValidation.error!;
+        newErrors.installmentAmount = instValidation.error!
       }
     }
 
     if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
+      setErrors(newErrors)
+      return
     }
 
     const expenseData = {
       category: category as Category,
       amount: amountNum,
       description: description.trim(),
-      installmentAmount: hasInstallments && installmentAmount
-        ? Number(installmentAmount)
-        : null,
-      installmentDetail: hasInstallments && installmentDetail.trim()
-        ? installmentDetail.trim()
-        : null,
-    };
-
-    if (editingExpense) {
-      editExpense(editingExpense.id, expenseData);
-    } else {
-      createExpense(expenseData);
+      installmentAmount:
+        hasInstallments && installmentAmount ? Number(installmentAmount) : null,
+      installmentDetail:
+        hasInstallments && installmentDetail.trim()
+          ? installmentDetail.trim()
+          : null,
     }
 
-    resetForm();
-    onClose?.();
+    if (editingExpense) {
+      editExpense(editingExpense.id, expenseData)
+    } else {
+      createExpense(expenseData)
+    }
+
+    resetForm()
+    onClose?.()
   }, [
     category,
     amount,
@@ -128,7 +130,7 @@ export const ExpenseForm = ({
     editExpense,
     resetForm,
     onClose,
-  ]);
+  ])
 
   return (
     <div className="flex flex-col gap-4">
@@ -140,8 +142,8 @@ export const ExpenseForm = ({
         <Select
           value={category}
           onValueChange={(v) => {
-            setCategory(v as Category);
-            setErrors((prev) => ({ ...prev, category: "" }));
+            setCategory(v as Category)
+            setErrors((prev) => ({ ...prev, category: "" }))
           }}
         >
           <SelectTrigger className="w-full">
@@ -162,15 +164,15 @@ export const ExpenseForm = ({
 
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center gap-2">
-          <span className="text-muted-foreground text-sm">$</span>
+          <span className="text-sm text-muted-foreground">$</span>
           <Input
             type="text"
             inputMode="numeric"
             placeholder="Monto"
             value={amount}
             onChange={(e) => {
-              setAmount(sanitizeNumericInput(e.target.value));
-              setErrors((prev) => ({ ...prev, amount: "" }));
+              setAmount(sanitizeNumericInput(e.target.value))
+              setErrors((prev) => ({ ...prev, amount: "" }))
             }}
           />
         </div>
@@ -185,8 +187,8 @@ export const ExpenseForm = ({
           placeholder="Descripción"
           value={description}
           onChange={(e) => {
-            setDescription(e.target.value);
-            setErrors((prev) => ({ ...prev, description: "" }));
+            setDescription(e.target.value)
+            setErrors((prev) => ({ ...prev, description: "" }))
           }}
         />
         {errors.description && (
@@ -198,11 +200,11 @@ export const ExpenseForm = ({
         <Switch
           checked={hasInstallments}
           onCheckedChange={(checked) => {
-            setHasInstallments(checked);
+            setHasInstallments(checked)
 
             if (!checked) {
-              setInstallmentAmount("");
-              setInstallmentDetail("");
+              setInstallmentAmount("")
+              setInstallmentDetail("")
             }
           }}
         />
@@ -213,15 +215,15 @@ export const ExpenseForm = ({
         <div className="flex flex-col gap-3 rounded-md border border-border p-3">
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center gap-2">
-              <span className="text-muted-foreground text-sm">$</span>
+              <span className="text-sm text-muted-foreground">$</span>
               <Input
                 type="text"
                 inputMode="numeric"
                 placeholder="Monto por cuota"
                 value={installmentAmount}
                 onChange={(e) => {
-                  setInstallmentAmount(sanitizeNumericInput(e.target.value));
-                  setErrors((prev) => ({ ...prev, installmentAmount: "" }));
+                  setInstallmentAmount(sanitizeNumericInput(e.target.value))
+                  setErrors((prev) => ({ ...prev, installmentAmount: "" }))
                 }}
               />
             </div>
@@ -251,5 +253,5 @@ export const ExpenseForm = ({
         )}
       </div>
     </div>
-  );
-};
+  )
+}

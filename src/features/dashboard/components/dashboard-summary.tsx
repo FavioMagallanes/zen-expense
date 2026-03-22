@@ -1,13 +1,13 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { useDashboard } from "@/features/dashboard/hooks/use-dashboard";
-import { useFormatCurrency } from "@/hooks/use-format-currency";
-import { BudgetProgress } from "@/features/dashboard/components/budget-progress";
+import { Card, CardContent } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { useDashboard } from "@/features/dashboard/hooks/use-dashboard"
+import { useFormatCurrency } from "@/hooks/use-format-currency"
+import { BudgetProgress } from "@/features/dashboard/components/budget-progress"
 
 export const DashboardSummary = () => {
   const { budget, totalSpent, remaining, isOverBudget, expenseCount } =
-    useDashboard();
-  const { formatCurrency } = useFormatCurrency();
+    useDashboard()
+  const { formatCurrency } = useFormatCurrency()
 
   return (
     <div className="flex flex-col gap-4">
@@ -47,9 +47,8 @@ export const DashboardSummary = () => {
             {formatCurrency(remaining)}
           </p>
           {isOverBudget && (
-            <p className="text-xs text-destructive mt-1">
-              Excediste el presupuesto por{" "}
-              {formatCurrency(Math.abs(remaining))}
+            <p className="mt-1 text-xs text-destructive">
+              Excediste el presupuesto por {formatCurrency(Math.abs(remaining))}
             </p>
           )}
         </CardContent>
@@ -59,5 +58,5 @@ export const DashboardSummary = () => {
 
       <BudgetProgress />
     </div>
-  );
-};
+  )
+}

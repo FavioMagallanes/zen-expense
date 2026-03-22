@@ -1,22 +1,26 @@
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { useFormatCurrency } from "@/hooks/use-format-currency";
-import type { Expense } from "@/types/expense";
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { useFormatCurrency } from "@/hooks/use-format-currency"
+import type { Expense } from "@/types/expense"
 
 type ExpenseItemProps = {
-  expense: Expense;
-  onEdit: (expense: Expense) => void;
-  onDelete: (id: string) => void;
-};
+  expense: Expense
+  onEdit: (expense: Expense) => void
+  onDelete: (id: string) => void
+}
 
-export const ExpenseItem = ({ expense, onEdit, onDelete }: ExpenseItemProps) => {
-  const { formatCurrency } = useFormatCurrency();
+export const ExpenseItem = ({
+  expense,
+  onEdit,
+  onDelete,
+}: ExpenseItemProps) => {
+  const { formatCurrency } = useFormatCurrency()
 
   return (
     <div className="flex items-center justify-between gap-3 rounded-md border border-border px-3 py-2.5">
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-foreground truncate">
+          <span className="truncate text-sm font-medium text-foreground">
             {expense.description}
           </span>
           {expense.installmentDetail && (
@@ -48,5 +52,5 @@ export const ExpenseItem = ({ expense, onEdit, onDelete }: ExpenseItemProps) => 
         </Button>
       </div>
     </div>
-  );
-};
+  )
+}

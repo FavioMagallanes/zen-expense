@@ -1,7 +1,7 @@
-import { useDashboard } from "@/features/dashboard/hooks/use-dashboard";
+import { useDashboard } from "@/features/dashboard/hooks/use-dashboard"
 
 export const BudgetProgress = () => {
-  const { progressPercent, isOverBudget } = useDashboard();
+  const { progressPercent, isOverBudget } = useDashboard()
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -22,5 +22,5 @@ export const BudgetProgress = () => {
         />
       </div>
     </div>
-  );
-};
+  )
+}
