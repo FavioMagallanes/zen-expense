@@ -10,7 +10,11 @@ import {
 } from "@/components/ui/dialog"
 import { useReset } from "@/features/reset/hooks/use-reset"
 
-export const ResetButton = () => {
+type ResetButtonProps = {
+  disabled?: boolean
+}
+
+export const ResetButton = ({ disabled = false }: ResetButtonProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const { performReset } = useReset()
 
@@ -21,9 +25,14 @@ export const ResetButton = () => {
 
   return (
     <>
-      <Button variant="destructive" size="sm" onClick={() => setIsOpen(true)}>
-        Limpieza Total
-      </Button>
+      <button
+        className="flex items-center gap-2 rounded border border-destructive px-3 py-1.5 text-xs font-bold tracking-wider text-destructive uppercase transition-colors hover:bg-destructive hover:text-white disabled:pointer-events-none disabled:opacity-40"
+        onClick={() => setIsOpen(true)}
+        disabled={disabled}
+      >
+        <span className="text-sm">⚠</span>
+        <span>Reiniciar Sistema</span>
+      </button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent>

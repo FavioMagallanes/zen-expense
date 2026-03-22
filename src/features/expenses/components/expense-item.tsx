@@ -3,6 +3,13 @@ import { Badge } from "@/components/ui/badge"
 import { useFormatCurrency } from "@/hooks/use-format-currency"
 import type { Expense } from "@/types/expense"
 
+const CATEGORY_COLORS: Record<string, string> = {
+  "Tarjeta BBVA": "bg-[#004481]",
+  "Tarjeta Supervielle": "bg-[#AC132D]",
+  Préstamo: "bg-yellow-600",
+  "Otros gastos": "bg-muted-foreground",
+}
+
 type ExpenseItemProps = {
   expense: Expense
   onEdit: (expense: Expense) => void
@@ -15,42 +22,59 @@ export const ExpenseItem = ({
   onDelete,
 }: ExpenseItemProps) => {
   const { formatCurrency } = useFormatCurrency()
+  const dotColor = CATEGORY_COLORS[expense.category] ?? "bg-muted-foreground"
 
   return (
-    <div className="flex items-center justify-between gap-3 rounded-md border border-border px-3 py-2.5">
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+    <tr className="group border-b border-border transition-colors hover:bg-card">
+      <td className="px-4 py-3 font-mono text-sm text-muted-foreground">
+        {new Date(expense.createdAt).toLocaleDateString("es-AR")}
+      </td>
+      <td className="px-4 py-3">
         <div className="flex items-center gap-2">
-          <span className="truncate text-sm font-medium text-foreground">
-            {expense.description}
-          </span>
+          <span className="text-sm text-foreground">{expense.description}</span>
           {expense.installmentDetail && (
-            <Badge variant="secondary" className="shrink-0 text-[10px]">
+            <Badge variant="secondary" className="text-[10px]">
               {expense.installmentDetail}
             </Badge>
           )}
         </div>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <span>{expense.category}</span>
-          {expense.installmentAmount !== null && (
-            <span>· Cuota: {formatCurrency(expense.installmentAmount)}</span>
-          )}
+      </td>
+      <td className="px-4 py-3">
+        <div className="flex items-center gap-2">
+          <div className={`h-3 w-1 rounded-full ${dotColor}`} />
+          <span className="text-xs text-muted-foreground">
+            {expense.category}
+          </span>
         </div>
-      </div>
-      <div className="flex items-center gap-2">
-        <span className="text-sm font-semibold tabular-nums">
-          {formatCurrency(expense.amount)}
-        </span>
-        <Button variant="ghost" size="icon-xs" onClick={() => onEdit(expense)}>
-          ✎
-        </Button>
-        <Button
-          variant="destructive"
-          size="icon-xs"
-          onClick={() => onDelete(expense.id)}
-        >
-          ✕
-        </Button>
-      </div>
-    </div>
+      </td>
+      <td className="px-4 py-3 text-right font-mono text-sm text-destructive">
+        -{formatCurrency(expense.amount)}
+        {expense.installmentAmount !== null && (
+          <div className="text-xs text-muted-foreground">
+            Cuota: {formatCurrency(expense.installmentAmount)}
+          </div>
+        )}
+      </td>
+      <td className="px-4 py-3 text-center">
+        <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+          <Button
+            variant="ghost"
+            size="icon-xs"
+            onClick={() => onEdit(expense)}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            ✎
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-xs"
+            onClick={() => onDelete(expense.id)}
+            className="text-destructive hover:text-destructive"
+          >
+            ✕
+          </Button>
+        </div>
+      </td>
+    </tr>
   )
 }

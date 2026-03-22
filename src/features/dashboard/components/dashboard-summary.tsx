@@ -1,60 +1,53 @@
-import { Card, CardContent } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
 import { useDashboard } from "@/features/dashboard/hooks/use-dashboard"
 import { useFormatCurrency } from "@/hooks/use-format-currency"
 import { BudgetProgress } from "@/features/dashboard/components/budget-progress"
 
 export const DashboardSummary = () => {
-  const { budget, totalSpent, remaining, isOverBudget, expenseCount } =
-    useDashboard()
+  const { budget, totalSpent, remaining, isOverBudget } = useDashboard()
   const { formatCurrency } = useFormatCurrency()
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-2 gap-3">
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground">Presupuesto</p>
-            <p className="text-lg font-semibold tabular-nums">
-              {formatCurrency(budget.amount)}
-            </p>
-          </CardContent>
-        </Card>
+    <div className="flex flex-col gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {/* Presupuesto Maestro */}
+        <div className="flex flex-col gap-2 overflow-hidden rounded border border-border bg-card p-6">
+          <span className="text-sm font-medium tracking-wider text-muted-foreground uppercase">
+            Presupuesto Maestro
+          </span>
+          <span className="font-mono text-4xl leading-none font-bold text-foreground">
+            {formatCurrency(budget.amount)}
+          </span>
+        </div>
 
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-xs text-muted-foreground">Total gastado</p>
-            <p className="text-lg font-semibold tabular-nums">
-              {formatCurrency(totalSpent)}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+        {/* Gastado */}
+        <div className="flex flex-col gap-2 overflow-hidden rounded border border-border bg-card p-6">
+          <span className="text-sm font-medium tracking-wider text-muted-foreground uppercase">
+            Gastado
+          </span>
+          <span className="font-mono text-4xl leading-none font-bold text-destructive">
+            {formatCurrency(totalSpent)}
+          </span>
+        </div>
 
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-muted-foreground">Restante</p>
-            <p className="text-xs text-muted-foreground tabular-nums">
-              {expenseCount} gasto{expenseCount !== 1 ? "s" : ""}
-            </p>
-          </div>
-          <p
-            className={`text-2xl font-bold tabular-nums ${
-              isOverBudget ? "text-destructive" : "text-foreground"
+        {/* Restante */}
+        <div className="flex flex-col gap-2 overflow-hidden rounded border border-border bg-card p-6">
+          <span className="text-sm font-medium tracking-wider text-muted-foreground uppercase">
+            Restante
+          </span>
+          <span
+            className={`font-mono text-4xl leading-none font-bold ${
+              isOverBudget ? "text-destructive" : "text-primary"
             }`}
           >
             {formatCurrency(remaining)}
-          </p>
+          </span>
           {isOverBudget && (
-            <p className="mt-1 text-xs text-destructive">
-              Excediste el presupuesto por {formatCurrency(Math.abs(remaining))}
-            </p>
+            <span className="text-xs text-destructive">
+              Excediste por {formatCurrency(Math.abs(remaining))}
+            </span>
           )}
-        </CardContent>
-      </Card>
-
-      <Separator />
+        </div>
+      </div>
 
       <BudgetProgress />
     </div>

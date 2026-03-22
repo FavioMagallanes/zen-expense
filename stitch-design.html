@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OLED Precision - Panel de Control</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-fixed": "#00FFAB",
+                        "inverse-primary": "#006c46",
+                        "surface-variant": "#353535",
+                        "secondary-fixed": "#e2e1eb",
+                        "surface-bright": "#393939",
+                        "error": "#E57373", // Softened red (Soft Coral)
+                        "on-secondary-fixed-variant": "#45464e",
+                        "background": "#000000",
+                        "tertiary-fixed": "#ffdad5",
+                        "on-primary-fixed-variant": "#005234",
+                        "surface-tint": "#00FFAB",
+                        "on-secondary-container": "#b4b4bd",
+                        "surface-dim": "#000000",
+                        "on-tertiary-fixed-variant": "#930005",
+                        "on-surface-variant": "#a1a1aa",
+                        "on-tertiary-container": "#c8060e",
+                        "surface-container-low": "#0b0b0b",
+                        "primary-container": "#00FFAB",
+                        "tertiary": "#fffcff",
+                        "primary-fixed-dim": "#00FFAB",
+                        "surface-container-high": "#1f1f1f",
+                        "surface-container-highest": "#353535",
+                        "surface": "#000000",
+                        "on-tertiary": "#690003",
+                        "inverse-surface": "#e2e2e2",
+                        "on-primary-container": "#002112",
+                        "secondary": "#c6c6cf",
+                        "on-secondary": "#2f3037",
+                        "on-primary": "#003822",
+                        "outline-variant": "#1f1f1f",
+                        "surface-container": "#0b0b0b",
+                        "outline": "#849589",
+                        "on-error-container": "#ffdad6",
+                        "on-background": "#f4f4f5",
+                        "on-secondary-fixed": "#1a1b22",
+                        "primary": "#f6fff6",
+                        "on-tertiary-fixed": "#410001",
+                        "on-surface": "#f4f4f5",
+                        "surface-container-lowest": "#000000",
+                        "tertiary-fixed-dim": "#ffb4aa",
+                        "secondary-fixed-dim": "#c6c6cf",
+                        "error-container": "#D24B4B", // Muted crimson for containers/buttons
+                        "on-primary-fixed": "#002112",
+                        "inverse-on-surface": "#303030",
+                        "secondary-container": "#1f1f1f",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#ffd7d1"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.25rem", "xl": "0.25rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0; }
+        .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1; }
+        
+        input[type="text"], input[type="number"], select {
+            background-color: transparent;
+            border: none;
+            border-bottom: 1px solid #a1a1aa;
+            border-radius: 0;
+            padding: 0.25rem 0;
+            color: #f4f4f5;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus, input[type="number"]:focus, select:focus {
+            outline: none;
+            border-bottom: 1px solid #00FFAB;
+            box-shadow: none;
+        }
+        
+        *:focus-visible {
+            outline: 2px solid #00FFAB;
+            outline-offset: 2px;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body min-h-screen flex selection:bg-primary-container selection:text-on-primary-container">
+<div class="relative flex h-screen w-full flex-row bg-background overflow-hidden">
+<!-- Main Content Area (Full width as sidebar was removed) -->
+<main class="flex-1 flex flex-col h-full overflow-y-auto">
+<!-- Header -->
+<header class="flex items-center justify-between border-b border-outline-variant px-8 py-4 bg-background sticky top-0 z-10">
+<div class="flex items-center gap-4">
+<div class="size-6 text-primary-container">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M36.7273 44C33.9891 44 31.6043 39.8386 30.3636 33.69C29.123 39.8386 26.7382 44 24 44C21.2618 44 18.877 39.8386 17.6364 33.69C16.3957 39.8386 14.0109 44 11.2727 44C7.25611 44 4 35.0457 4 24C4 12.9543 7.25611 4 11.2727 4C14.0109 4 16.3957 8.16144 17.6364 14.31C18.877 8.16144 21.2618 4 24 4C26.7382 4 29.123 8.16144 30.3636 14.31C31.6043 8.16144 33.9891 4 36.7273 4C40.7439 4 44 12.9543 44 24C44 35.0457 40.7439 44 36.7273 44Z" fill="currentColor"></path>
+</svg>
+</div>
+<h1 class="text-xl font-bold">Panel de Control</h1>
+</div>
+<div class="flex items-center gap-6">
+<!-- Hard Reset with Softened Red -->
+<button class="flex items-center gap-2 px-3 py-1.5 border border-error-container text-error-container hover:bg-error-container hover:text-white transition-colors rounded text-xs font-bold uppercase tracking-wider group">
+<span class="material-symbols-outlined text-sm" data-icon="warning">warning</span>
+<span>Reiniciar Sistema</span>
+</button>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-on-background">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="size-8 rounded-full bg-surface-container border border-outline-variant bg-center bg-cover" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBRzVI0zciRtYiE8Hcbb67gmGV31C-hbyYQsXzo-nP3rZwJtyr-DrlY5IzfDvT_0cmLGabV7rbyrqRKe35S2Ks_PQdloXh0bZWnwFZYf0obt5R2XmscnA3FvrF_6E0uB-OPZHyl0NEzJClPfY5GEOeRPqFKvnQDQAbHV06st7YfDIYanGYMfhsQzrZQ_oLE0WsZToLRQ8hn5PJPyEgVZ7TIkvIuK8jHNEEi0_3ssz7jmdpBa3Jm8HusV-lXC9LEm3VprYJB-jbCjUyR");'></div>
+</div>
+</div>
+</header>
+<div class="p-8 flex flex-col gap-8 max-w-7xl mx-auto w-full">
+<!-- Resumen de Presupuesto -->
+<section aria-label="Resumen de Presupuesto" class="flex flex-col gap-6">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Master Budget -->
+<div class="bg-surface-container border border-outline-variant p-6 rounded flex flex-col gap-2 overflow-hidden">
+<span class="text-sm text-on-surface-variant uppercase tracking-wider font-medium">Presupuesto Maestro</span>
+<span class="leading-none font-mono font-bold text-on-background text-4xl">$1,200,000</span>
+</div>
+<!-- Spent (Softened Red) -->
+<div class="bg-surface-container border border-outline-variant p-6 rounded flex flex-col gap-2 overflow-hidden">
+<span class="text-sm text-on-surface-variant uppercase tracking-wider font-medium">Gastado</span>
+<span class="leading-none font-mono font-bold text-error-container text-4xl">$450,000</span>
+</div>
+<!-- Residual -->
+<div class="bg-surface-container border border-outline-variant p-6 rounded flex flex-col gap-2 overflow-hidden">
+<span class="text-sm text-on-surface-variant uppercase tracking-wider font-medium">Restante</span>
+<span class="leading-none font-mono font-bold text-primary-container text-4xl">$750,000</span>
+</div>
+</div>
+<!-- Barra de Progreso -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between text-sm">
+<span class="text-on-surface-variant">Consumo</span>
+<span class="font-mono text-on-background">37.5%</span>
+</div>
+<div class="h-1 w-full bg-surface-container rounded-none overflow-hidden">
+<div aria-valuemax="100" aria-valuemin="0" aria-valuenow="37.5" class="h-full bg-primary-container" role="progressbar" style="width: 37.5%;"></div>
+</div>
+</div>
+</section>
+<!-- Entrada Rápida -->
+<section aria-label="Entrada Rápida" class="bg-surface-container border border-outline-variant p-6 rounded flex flex-col gap-4">
+<h2 class="text-lg font-bold">Entrada Rápida</h2>
+<form class="flex flex-wrap items-end gap-6">
+<div class="flex flex-col gap-1 flex-1 min-w-[200px]">
+<label class="text-xs text-on-surface-variant" for="desc">Descripción</label>
+<input class="font-mono text-sm w-full" id="desc" placeholder="ej. Alojamiento de Servidor" type="text"/>
+</div>
+<div class="flex flex-col gap-1 flex-1 min-w-[150px]">
+<label class="text-xs text-on-surface-variant" for="amount">Monto</label>
+<input class="font-mono text-sm w-full" id="amount" placeholder="0.00" type="number"/>
+</div>
+<div class="flex flex-col gap-1 flex-1 min-w-[150px]">
+<label class="text-xs text-on-surface-variant" for="account">Cuenta</label>
+<div class="relative flex items-center">
+<div class="w-1 h-4 bg-[#004481] absolute left-0 top-1/2 -translate-y-1/2 ml-1"></div>
+<select class="w-full text-sm pl-4 appearance-none bg-transparent border-b border-on-surface-variant rounded-none py-1 focus:border-primary-container focus:outline-none" id="account">
+<option class="bg-surface-container" value="bbva">BBVA</option>
+<option class="bg-surface-container" value="supervielle">Supervielle</option>
+</select>
+</div>
+</div>
+<div class="flex flex-col gap-1 w-24">
+<label class="text-xs text-on-surface-variant" for="installments">Cuotas</label>
+<input class="font-mono text-sm w-full text-center" id="installments" placeholder="1/1" type="text"/>
+</div>
+<button class="h-8 px-6 bg-gradient-to-r from-primary-container to-[#00a871] text-on-primary-container font-medium text-sm rounded transition-transform" type="button">
+                            Agregar
+                        </button>
+</form>
+</section>
+<!-- Transacciones Recientes -->
+<section aria-label="Transacciones Recientes" class="flex flex-col gap-4">
+<h2 class="text-lg font-bold">Transacciones Recientes</h2>
+<div class="bg-surface-container border border-outline-variant rounded overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant text-xs text-on-surface-variant uppercase tracking-wider">
+<th class="py-3 px-4 font-medium w-32">Fecha</th>
+<th class="py-3 px-4 font-medium">Descripción</th>
+<th class="py-3 px-4 font-medium w-48">Cuenta</th>
+<th class="py-3 px-4 font-medium text-right w-32">Monto</th>
+<th class="py-3 px-4 w-12"></th>
+</tr>
+</thead>
+<tbody class="text-sm">
+<tr class="border-b border-outline-variant group hover:bg-surface transition-colors">
+<td class="py-3 px-4 font-mono text-on-surface-variant">2023-10-24</td>
+<td class="py-3 px-4 text-on-background">Servicios Web AWS</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-1 h-3 bg-[#004481] rounded-full"></div>
+<span class="text-on-surface-variant text-xs">BBVA Corriente</span>
+</div>
+</td>
+<!-- Softened Red Amount -->
+<td class="py-3 px-4 font-mono text-right text-error-container">-$1,250.00</td>
+<td class="py-3 px-4 text-center">
+<button aria-label="Eliminar transacción" class="opacity-0 group-hover:opacity-100 text-error-container hover:text-error transition-opacity">
+<span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+</button>
+</td>
+</tr>
+<tr class="border-b border-outline-variant group hover:bg-surface transition-colors">
+<td class="py-3 px-4 font-mono text-on-surface-variant">2023-10-23</td>
+<td class="py-3 px-4 text-on-background">Iguala Cliente - Acme Corp</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-1 h-3 bg-[#AC132D] rounded-full"></div>
+<span class="text-on-surface-variant text-xs">Supervielle Negocios</span>
+</div>
+</td>
+<td class="py-3 px-4 font-mono text-right text-primary-container">+$5,000.00</td>
+<td class="py-3 px-4 text-center">
+<button aria-label="Eliminar transacción" class="opacity-0 group-hover:opacity-100 text-error-container hover:text-error transition-opacity">
+<span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+</button>
+</td>
+</tr>
+<tr class="group hover:bg-surface transition-colors">
+<td class="py-3 px-4 font-mono text-on-surface-variant">2023-10-21</td>
+<td class="py-3 px-4 text-on-background">Suministros de Oficina</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-1 h-3 bg-[#004481] rounded-full"></div>
+<span class="text-on-surface-variant text-xs">BBVA Tarjeta</span>
+</div>
+</td>
+<!-- Softened Red Amount -->
+<td class="py-3 px-4 font-mono text-right text-error-container">-$145.50</td>
+<td class="py-3 px-4 text-center">
+<button aria-label="Eliminar transacción" class="opacity-0 group-hover:opacity-100 text-error-container hover:text-error transition-opacity">
+<span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</main>
+</div>
+</body></html>

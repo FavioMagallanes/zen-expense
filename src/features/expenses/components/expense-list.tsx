@@ -35,16 +35,22 @@ export const ExpenseList = () => {
 
   if (expenses.length === 0) {
     return (
-      <p className="py-4 text-center text-sm text-muted-foreground">
-        No hay gastos registrados
-      </p>
+      <div className="flex flex-col items-center gap-2 rounded border border-border bg-card px-6 py-12 text-center">
+        <span className="text-sm text-muted-foreground">
+          No hay gastos registrados
+        </span>
+        <span className="text-xs text-muted-foreground/60">
+          Usá la entrada rápida para agregar tu primer gasto
+        </span>
+      </div>
     )
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-4">
       {editingExpense && (
-        <div className="mb-2 rounded-md border border-border p-3">
+        <div className="rounded border border-primary bg-card p-6">
+          <h3 className="mb-4 text-lg font-bold">Editar Transacción</h3>
           <ExpenseForm
             editingExpense={editingExpense}
             onClose={handleCloseEdit}
@@ -52,14 +58,29 @@ export const ExpenseList = () => {
         </div>
       )}
 
-      {expenses.map((expense) => (
-        <ExpenseItem
-          key={expense.id}
-          expense={expense}
-          onEdit={handleEdit}
-          onDelete={(id) => setDeletingId(id)}
-        />
-      ))}
+      <div className="overflow-hidden rounded border border-border bg-card">
+        <table className="w-full border-collapse text-left">
+          <thead>
+            <tr className="border-b border-border text-xs tracking-wider text-muted-foreground uppercase">
+              <th className="w-32 px-4 py-3 font-medium">Fecha</th>
+              <th className="px-4 py-3 font-medium">Descripción</th>
+              <th className="w-48 px-4 py-3 font-medium">Cuenta</th>
+              <th className="w-32 px-4 py-3 text-right font-medium">Monto</th>
+              <th className="w-12 px-4 py-3" />
+            </tr>
+          </thead>
+          <tbody className="text-sm">
+            {expenses.map((expense) => (
+              <ExpenseItem
+                key={expense.id}
+                expense={expense}
+                onEdit={handleEdit}
+                onDelete={(id) => setDeletingId(id)}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <Dialog
         open={deletingId !== null}

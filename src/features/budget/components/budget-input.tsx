@@ -1,5 +1,4 @@
 import { useState, useCallback, type KeyboardEvent } from "react"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useBudget } from "@/features/budget/hooks/use-budget"
 import { useFormatCurrency } from "@/hooks/use-format-currency"
@@ -57,32 +56,51 @@ export const BudgetInput = () => {
 
   if (!isEditing) {
     return (
-      <div className="flex items-center gap-3">
-        <span className="text-2xl font-semibold tracking-tight">
-          {formatCurrency(budget.amount)}
-        </span>
-        <Button variant="outline" size="sm" onClick={handleStartEditing}>
-          Editar
-        </Button>
+      <div
+        className="flex cursor-pointer items-center gap-4 rounded border border-border bg-card p-6"
+        onClick={handleStartEditing}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") handleStartEditing()
+        }}
+      >
+        <div className="flex flex-col gap-1">
+          <span className="text-sm font-medium tracking-wider text-muted-foreground uppercase">
+            Presupuesto Maestro
+          </span>
+          <span className="font-mono text-4xl leading-none font-bold text-foreground">
+            {formatCurrency(budget.amount)}
+          </span>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center gap-2">
-        <span className="text-muted-foreground">$</span>
-        <Input
-          type="text"
-          inputMode="numeric"
-          placeholder="0"
-          value={inputValue}
-          onChange={(e) => handleChange(e.target.value)}
-          onKeyDown={handleKeyDown}
-          autoFocus
-          className="max-w-48"
-        />
-        <Button size="sm" onClick={handleSave}>
+    <div className="flex flex-col gap-3 rounded border border-primary bg-card p-6">
+      <span className="text-sm font-medium tracking-wider text-muted-foreground uppercase">
+        Editar Presupuesto
+      </span>
+      <div className="flex items-end gap-4">
+        <div className="flex flex-1 items-center gap-1">
+          <span className="font-mono text-2xl text-muted-foreground">$</span>
+          <input
+            type="text"
+            inputMode="numeric"
+            placeholder="0"
+            value={inputValue}
+            onChange={(e) => handleChange(e.target.value)}
+            onKeyDown={handleKeyDown}
+            autoFocus
+            className="stitch-input w-full font-mono text-2xl font-bold"
+          />
+        </div>
+        <Button
+          size="sm"
+          onClick={handleSave}
+          className="bg-primary text-primary-foreground hover:bg-primary/80"
+        >
           Guardar
         </Button>
         <Button variant="ghost" size="sm" onClick={handleCancel}>

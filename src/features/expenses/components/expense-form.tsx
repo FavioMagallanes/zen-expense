@@ -1,5 +1,4 @@
 import { useState, useCallback } from "react"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
   Select,
@@ -20,11 +19,13 @@ import {
 type ExpenseFormProps = {
   editingExpense?: Expense | null
   onClose?: () => void
+  disabled?: boolean
 }
 
 export const ExpenseForm = ({
   editingExpense = null,
   onClose,
+  disabled = false,
 }: ExpenseFormProps) => {
   const { createExpense, editExpense } = useExpenses()
 
@@ -133,125 +134,159 @@ export const ExpenseForm = ({
   ])
 
   return (
-    <div className="flex flex-col gap-4">
-      <h3 className="text-sm font-medium text-foreground">
-        {editingExpense ? "Editar gasto" : "Nuevo gasto"}
-      </h3>
+    <fieldset disabled={disabled} className="contents">
+      <form
+        className="flex flex-wrap items-end gap-6"
+        onSubmit={(e) => {
+          e.preventDefault()
+          handleSubmit()
+        }}
+      >
+        <div className="flex min-w-50 flex-1 flex-col gap-1">
+          <label
+            className="text-xs text-muted-foreground"
+            htmlFor="expense-desc"
+          >
+            Descripción
+          </label>
+          <input
+            id="expense-desc"
+            type="text"
+            placeholder="ej. Supermercado"
+            value={description}
+            onChange={(e) => {
+              setDescription(e.target.value)
+              setErrors((prev) => ({ ...prev, description: "" }))
+            }}
+            className="stitch-input w-full text-sm"
+          />
+          {errors.description && (
+            <p className="text-xs text-destructive">{errors.description}</p>
+          )}
+        </div>
 
-      <div className="flex flex-col gap-1.5">
-        <Select
-          value={category}
-          onValueChange={(v) => {
-            setCategory(v as Category)
-            setErrors((prev) => ({ ...prev, category: "" }))
-          }}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Categoría" />
-          </SelectTrigger>
-          <SelectContent>
-            {CATEGORIES.map((cat) => (
-              <SelectItem key={cat} value={cat}>
-                {cat}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {errors.category && (
-          <p className="text-xs text-destructive">{errors.category}</p>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">$</span>
-          <Input
+        <div className="flex min-w-37.5 flex-1 flex-col gap-1">
+          <label
+            className="text-xs text-muted-foreground"
+            htmlFor="expense-amount"
+          >
+            Monto
+          </label>
+          <input
+            id="expense-amount"
             type="text"
             inputMode="numeric"
-            placeholder="Monto"
+            placeholder="0"
             value={amount}
             onChange={(e) => {
               setAmount(sanitizeNumericInput(e.target.value))
               setErrors((prev) => ({ ...prev, amount: "" }))
             }}
+            className="stitch-input w-full font-mono text-sm"
+          />
+          {errors.amount && (
+            <p className="text-xs text-destructive">{errors.amount}</p>
+          )}
+        </div>
+
+        <div className="flex min-w-37.5 flex-1 flex-col gap-1">
+          <label className="text-xs text-muted-foreground">Cuenta</label>
+          <Select
+            value={category}
+            onValueChange={(v) => {
+              setCategory(v as Category)
+              setErrors((prev) => ({ ...prev, category: "" }))
+            }}
+          >
+            <SelectTrigger className="h-auto rounded-none border-0 border-b border-muted-foreground bg-transparent px-0 py-1 text-sm shadow-none focus:border-primary focus:ring-0">
+              <SelectValue placeholder="Seleccionar" />
+            </SelectTrigger>
+            <SelectContent>
+              {CATEGORIES.map((cat) => (
+                <SelectItem key={cat} value={cat}>
+                  {cat}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {errors.category && (
+            <p className="text-xs text-destructive">{errors.category}</p>
+          )}
+        </div>
+
+        <div className="flex w-24 flex-col gap-1">
+          <label
+            className="text-xs text-muted-foreground"
+            htmlFor="expense-installments"
+          >
+            Cuotas
+          </label>
+          <input
+            id="expense-installments"
+            type="text"
+            placeholder="1/1"
+            value={installmentDetail}
+            onChange={(e) => setInstallmentDetail(e.target.value)}
+            className="stitch-input w-full text-center text-sm"
           />
         </div>
-        {errors.amount && (
-          <p className="text-xs text-destructive">{errors.amount}</p>
-        )}
-      </div>
 
-      <div className="flex flex-col gap-1.5">
-        <Input
-          type="text"
-          placeholder="Descripción"
-          value={description}
-          onChange={(e) => {
-            setDescription(e.target.value)
-            setErrors((prev) => ({ ...prev, description: "" }))
-          }}
-        />
-        {errors.description && (
-          <p className="text-xs text-destructive">{errors.description}</p>
-        )}
-      </div>
-
-      <div className="flex items-center gap-2">
-        <Switch
-          checked={hasInstallments}
-          onCheckedChange={(checked) => {
-            setHasInstallments(checked)
-
-            if (!checked) {
-              setInstallmentAmount("")
-              setInstallmentDetail("")
-            }
-          }}
-        />
-        <span className="text-sm text-muted-foreground">En cuotas</span>
-      </div>
-
-      {hasInstallments && (
-        <div className="flex flex-col gap-3 rounded-md border border-border p-3">
-          <div className="flex flex-col gap-1.5">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">$</span>
-              <Input
-                type="text"
-                inputMode="numeric"
-                placeholder="Monto por cuota"
-                value={installmentAmount}
-                onChange={(e) => {
-                  setInstallmentAmount(sanitizeNumericInput(e.target.value))
-                  setErrors((prev) => ({ ...prev, installmentAmount: "" }))
-                }}
-              />
-            </div>
+        {hasInstallments && (
+          <div className="flex w-32 flex-col gap-1">
+            <label
+              className="text-xs text-muted-foreground"
+              htmlFor="expense-inst-amount"
+            >
+              Monto cuota
+            </label>
+            <input
+              id="expense-inst-amount"
+              type="text"
+              inputMode="numeric"
+              placeholder="0"
+              value={installmentAmount}
+              onChange={(e) => {
+                setInstallmentAmount(sanitizeNumericInput(e.target.value))
+                setErrors((prev) => ({ ...prev, installmentAmount: "" }))
+              }}
+              className="stitch-input w-full font-mono text-sm"
+            />
             {errors.installmentAmount && (
               <p className="text-xs text-destructive">
                 {errors.installmentAmount}
               </p>
             )}
           </div>
-          <Input
-            type="text"
-            placeholder='Detalle (ej. "Cuota 2 de 6")'
-            value={installmentDetail}
-            onChange={(e) => setInstallmentDetail(e.target.value)}
-          />
-        </div>
-      )}
+        )}
 
-      <div className="flex gap-2">
-        <Button size="sm" onClick={handleSubmit}>
+        <div className="flex items-center gap-2 pb-1">
+          <Switch
+            checked={hasInstallments}
+            onCheckedChange={(checked) => {
+              setHasInstallments(checked)
+              if (!checked) {
+                setInstallmentAmount("")
+                setInstallmentDetail("")
+              }
+            }}
+          />
+          <span className="text-xs text-muted-foreground">En cuotas</span>
+        </div>
+
+        <button
+          type="submit"
+          disabled={disabled}
+          className="h-8 rounded bg-linear-to-r from-primary to-primary/70 px-6 text-sm font-medium text-primary-foreground transition-transform active:scale-95 disabled:pointer-events-none disabled:opacity-40"
+        >
           {editingExpense ? "Actualizar" : "Agregar"}
-        </Button>
+        </button>
+
         {onClose && (
           <Button variant="ghost" size="sm" onClick={onClose}>
             Cancelar
           </Button>
         )}
-      </div>
-    </div>
+      </form>
+    </fieldset>
   )
 }
