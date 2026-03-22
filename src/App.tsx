@@ -1,19 +1,62 @@
-import { Button } from "@/components/ui/button"
+import { useState } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { BudgetInput } from "@/features/budget"
+import { DashboardSummary } from "@/features/dashboard"
+import { ExpenseForm, ExpenseList } from "@/features/expenses"
+import { ResetButton } from "@/features/reset"
 
-export function App() {
+const App = () => {
+  const [showForm, setShowForm] = useState(false)
+
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
+    <div className="mx-auto min-h-svh max-w-lg px-4 py-6">
+      <header className="mb-6 flex items-center justify-between">
+        <h1 className="text-lg font-semibold tracking-tight">Zen Expense</h1>
+        <ResetButton />
+      </header>
+
+      <section className="mb-6">
+        <p className="mb-2 text-xs text-muted-foreground">
+          Presupuesto mensual
+        </p>
+        <BudgetInput />
+      </section>
+
+      <Separator className="mb-6" />
+
+      <section className="mb-6">
+        <DashboardSummary />
+      </section>
+
+      <Separator className="mb-6" />
+
+      <section className="mb-6">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-sm font-medium">Gastos</h2>
+          {!showForm && (
+            <button
+              className="text-xs text-primary hover:underline"
+              onClick={() => setShowForm(true)}
+            >
+              + Nuevo gasto
+            </button>
+          )}
         </div>
-        <div className="font-mono text-xs text-muted-foreground">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
-      </div>
+
+        {showForm && (
+          <Card className="mb-4">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm">Nuevo gasto</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ExpenseForm onClose={() => setShowForm(false)} />
+            </CardContent>
+          </Card>
+        )}
+
+        <ExpenseList />
+      </section>
     </div>
   )
 }
